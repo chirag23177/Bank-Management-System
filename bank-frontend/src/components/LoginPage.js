@@ -32,7 +32,7 @@ function LoginPage() {
 
       const data = await response.json();
       if (loginType === 'customer') {
-        navigate(`/customer-dashboard/${data.UserID}`);
+        navigate(`/user-dashboard/${data.userid}`);
       } else {
         navigate(`/employee-dashboard/${data.EmployeeID}`);
       }

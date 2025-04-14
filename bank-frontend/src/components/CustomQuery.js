@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 import './CustomQuery.css'; // Add a CSS file for custom styles
 
 function CustomQuery() {
   const [query, setQuery] = useState('');
   const [result, setResult] = useState(null);
   const [message, setMessage] = useState('');
+  const navigate = useNavigate(); // For navigation
 
   const handleRunQuery = async (e) => {
     e.preventDefault();
@@ -29,11 +31,18 @@ function CustomQuery() {
     }
   };
 
+  const handleBack = () => {
+    navigate(-1); // Go back to the previous page
+  };
+
+  const handleLogout = () => {
+    navigate('/'); // Redirect to the login page
+  };
+
   const renderResult = () => {
     if (!result) return null;
 
     if (Array.isArray(result) && result.length > 0) {
-      // Render as a table if the result is an array of objects
       const headers = Object.keys(result[0]);
       return (
         <table className="query-result-table">
@@ -56,7 +65,6 @@ function CustomQuery() {
         </table>
       );
     } else if (typeof result === 'object') {
-      // Render as key-value pairs if the result is a single object
       return (
         <div className="query-result-object">
           {Object.entries(result).map(([key, value]) => (
@@ -67,13 +75,18 @@ function CustomQuery() {
         </div>
       );
     } else {
-      // Render as plain text for other types of results
       return <pre>{JSON.stringify(result, null, 2)}</pre>;
     }
   };
 
   return (
     <div className="custom-query-container">
+      {/* Back and Logout Buttons */}
+      <div className="top-buttons">
+        <button onClick={handleBack} className="back-button">Back</button>
+        <button onClick={handleLogout} className="logout-button">Logout</button>
+      </div>
+
       <header className="custom-query-header">
         <h1>Custom Query</h1>
         <p>Run your SQL queries directly and view the results below.</p>

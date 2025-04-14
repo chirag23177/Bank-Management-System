@@ -1,33 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './CustomerDashboard.css'; // Keep your CSS styling
 
 function CustomerDashboard() {
-  const { customerId } = useParams();
+  const { userId } = useParams(); // Extract userId from the URL
+  const navigate = useNavigate();
 
-  const [customerInfo, setCustomerInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [loans, setLoans] = useState([]);
 
   useEffect(() => {
-    const fetchCustomerInfo = async () => {
+    const fetchUserInfo = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/customer/${customerId}`);
+        const response = await fetch(`http://localhost:5000/user/${userId}`);
         if (response.ok) {
           const data = await response.json();
-          setCustomerInfo(data);
+          setUserInfo(data);
         } else {
-          console.error('Customer not found');
+          console.error('User not found');
         }
       } catch (error) {
-        console.error('Error fetching customer info:', error);
+        console.error('Error fetching user info:', error);
       }
     };
 
     const fetchAccounts = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/customer/${customerId}/accounts`);
+        const response = await fetch(`http://localhost:5000/user/${userId}/accounts`);
         if (response.ok) {
           const data = await response.json();
           setAccounts(data);
@@ -39,41 +40,100 @@ function CustomerDashboard() {
       }
     };
 
-    fetchCustomerInfo();
+    const fetchTransactions = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/user/${userId}/transactions`);
+        if (response.ok) {
+          const data = await response.json();
+          setTransactions(data);
+        } else {
+          console.error('Error fetching transactions');
+        }
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    };
+
+    const fetchLoans = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/user/${userId}/loans`);
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Fetched Loans:', data); // Debugging
+          setLoans(data);
+        } else {
+          console.error('Error fetching loans');
+        }
+      } catch (error) {
+        console.error('Error fetching loans:', error);
+      }
+    };
+
+    fetchUserInfo();
     fetchAccounts();
-  }, [customerId]);
+    fetchTransactions();
+    fetchLoans();
+  }, [userId]);
 
   const redirectToTransferPage = () => {
-    window.location.href = 'http://localhost:3002/transfer-funds';
+    navigate('/transfer-funds');
+  };
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const handleLogout = () => {
+    navigate('/');
+  };
+
+  const formatTransactionType = (transaction, userAccounts) => {
+    if (userAccounts.includes(transaction.accountno1)) {
+      return {
+        type: 'Sent',
+        account: `To: Account #${transaction.accountno2}`,
+        amount: `- ₹${transaction.transactionamount}`,
+      };
+    } else {
+      return {
+        type: 'Received',
+        account: `From: Account #${transaction.accountno1}`,
+        amount: `+ ₹${transaction.transactionamount}`,
+      };
+    }
   };
 
   return (
     <div className="customer-dashboard-container">
+      <div className="top-buttons">
+        <button onClick={handleBack} className="back-button">Back</button>
+        <button onClick={handleLogout} className="logout-button">Logout</button>
+      </div>
       <header className="dashboard-header">
-        <h1>Customer Dashboard</h1>
+        <h1>User Dashboard</h1>
       </header>
 
-      {customerInfo ? (
+      {userInfo ? (
         <section className="customer-info">
-          <h2>Welcome, {customerInfo.Name}</h2>
+          <h2>Welcome, {userInfo.name}</h2>
           <div className="info-card">
-            <p><strong>Customer ID:</strong> {customerInfo.UserID}</p>
-            <p><strong>Name:</strong> {customerInfo.Name}</p>
-            <p><strong>Mobile Number:</strong> {customerInfo.MobileNumber}</p>
-            <p><strong>Address:</strong> {customerInfo.Address}</p>
+            <p><strong>User ID:</strong> {userInfo.userid}</p>
+            <p><strong>Name:</strong> {userInfo.name}</p>
+            <p><strong>Mobile Number:</strong> {userInfo.mobilenumber}</p>
+            <p><strong>Address:</strong> {userInfo.address}</p>
           </div>
         </section>
       ) : (
-        <p className="loading-message">Loading customer information...</p>
+        <p className="loading-message">Loading user information...</p>
       )}
 
       <section className="accounts-section">
         <h3>Your Accounts</h3>
         {accounts.length > 0 ? (
           accounts.map((account) => (
-            <div key={account.AccountNo} className="data-card">
-              <p><strong>Account No:</strong> {account.AccountNo}</p>
-              <p><strong>Balance:</strong> ₹{account.Balance}</p>
+            <div key={account.accountno} className="data-card">
+              <p><strong>Account No:</strong> {account.accountno}</p>
+              <p><strong>Balance:</strong> ₹{account.balance}</p>
             </div>
           ))
         ) : (
@@ -103,12 +163,31 @@ function CustomerDashboard() {
       <section className="transactions-section">
         <h3>Your Transactions</h3>
         {transactions.length > 0 ? (
-          transactions.map((tx) => (
-            <div key={tx.TransactionID} className="data-card">
-              <p><strong>Transaction ID:</strong> {tx.TransactionID}</p>
-              <p><strong>Amount:</strong> ₹{tx.TransactionAmount}</p>
-            </div>
-          ))
+          <table className="transactions-table">
+            <thead>
+              <tr>
+                <th>Transaction ID</th>
+                <th>Date & Time</th>
+                <th>Type</th>
+                <th>Account</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {transactions.map((transaction) => {
+                const { type, account, amount } = formatTransactionType(transaction, accounts.map((acc) => acc.accountno));
+                return (
+                  <tr key={transaction.transactionid}>
+                    <td>{transaction.transactionid}</td>
+                    <td>{new Date(transaction.transactiontime).toLocaleString()}</td>
+                    <td>{type}</td>
+                    <td>{account}</td>
+                    <td>{amount}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         ) : (
           <p>No transactions available.</p>
         )}
@@ -117,13 +196,30 @@ function CustomerDashboard() {
       <section className="loans-section">
         <h3>Your Loans</h3>
         {loans.length > 0 ? (
-          loans.map((loan) => (
-            <div key={loan.LoanID} className="data-card">
-              <p><strong>Loan ID:</strong> {loan.LoanID}</p>
-              <p><strong>Loan Amount:</strong> ₹{loan.LoanAmount}</p>
-              <p><strong>Interest:</strong> {loan.Interest}%</p>
-            </div>
-          ))
+          <table className="loans-table">
+            <thead>
+              <tr>
+                <th>Loan Type</th>
+                <th>Amount</th>
+                <th>Interest</th>
+                <th>Duration</th>
+                <th>Issued By</th>
+                <th>Issued On</th>
+              </tr>
+            </thead>
+            <tbody>
+              {loans.map((loan) => (
+                <tr key={loan.loanid}>
+                  <td>{loan.loantype}</td>
+                  <td>₹{loan.loanamount}</td>
+                  <td>{loan.interest}%</td>
+                  <td>{loan.duration} months</td>
+                  <td>{loan.issuedby}</td>
+                  <td>{new Date(loan.issuedate).toLocaleDateString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         ) : (
           <p>No loans available.</p>
         )}

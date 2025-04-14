@@ -11,7 +11,6 @@ function TransferFunds() {
   const handleTransfer = async (e) => {
     e.preventDefault();
 
-    // Prepare payload
     const payload = {
       source_account: sourceAccount,
       target_account: targetAccount,
@@ -27,8 +26,6 @@ function TransferFunds() {
       if (response.ok) {
         const data = await response.json();
         setMessage(data.message);
-        // Optionally, navigate back to the dashboard after successful transfer
-        // navigate(`/customer-dashboard/${customerId}`); // if you want to go back with a parameter
       } else {
         const errorData = await response.json();
         setMessage(errorData.error || 'Transfer failed');
@@ -39,8 +36,22 @@ function TransferFunds() {
     }
   };
 
+  const handleBack = () => {
+    navigate(-1); // Go back to the previous page
+  };
+
+  const handleLogout = () => {
+    navigate('/'); // Redirect to the login page
+  };
+
   return (
     <div className="container" style={{ maxWidth: '600px', margin: '0 auto', padding: '20px' }}>
+      {/* Back and Logout Buttons */}
+      <div className="top-buttons">
+        <button onClick={handleBack} className="back-button">Back</button>
+        <button onClick={handleLogout} className="logout-button">Logout</button>
+      </div>
+
       <header style={{ marginBottom: '20px' }}>
         <h1>Transfer Funds</h1>
       </header>

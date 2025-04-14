@@ -188,6 +188,183 @@ app.post('/transfer-funds', async (req, res) => {
     }
 });
 
+// ---------- Endpoint: Fetch Users ---------- //
+app.get('/users', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT userid, name, address FROM users'); // Include the address field
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint: Fetch Accounts with User and Branch Details
+app.get('/accounts', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        a.accountno, 
+        a.balance, 
+        COALESCE(u.name, 'N/A') AS username, 
+        COALESCE(b.branchid, -1) AS branchid, -- Replace NULL with -1 for branchid
+        COALESCE(b.branchadd, 'N/A') AS branchaddress -- Replace NULL with 'N/A' for branchadd
+      FROM account a
+      LEFT JOIN users u ON a.userid = u.userid
+      LEFT JOIN branch b ON a.branchid = b.branchid
+    `);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching accounts:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint: Fetch Loans with User and Bank Details
+app.get('/loans', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        l.loanid, 
+        COALESCE(u.name, 'N/A') AS username, 
+        l.loanamount, 
+        l.duration, 
+        l.interest, 
+        l.loantype, 
+        COALESCE(b.bankname, 'N/A') AS bankname, 
+        l.issuedate
+      FROM loan l
+      LEFT JOIN users u ON l.userid = u.userid
+      LEFT JOIN bank b ON l.bankid = b.bankid
+    `);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching loans:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint: Fetch Branches
+app.get('/branches', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT branchid FROM branch'); // Fetch all branches
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching branches:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint: Fetch Bank Information
+app.get('/banks', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        bankid, 
+        bankname, 
+        bankmoney, 
+        noofbranches
+      FROM bank
+    `);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching bank information:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// ---------- Endpoint: Fetch User Details ---------- //
+app.get('/user/:userId', async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const result = await pool.query('SELECT * FROM users WHERE userid = $1', [userId]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error fetching user details:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// ---------- Endpoint: Fetch Accounts for a User ---------- //
+app.get('/user/:userId/accounts', async (req, res) => {
+  const { userId } = req.params;
+  try {
+    const result = await pool.query('SELECT * FROM account WHERE userid = $1', [userId]);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching user accounts:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint: Fetch Transactions for All User Accounts
+app.get('/user/:userId/transactions', async (req, res) => {
+  const { userId } = req.params;
+  try {
+    // Fetch all accounts owned by the user
+    const accountsResult = await pool.query('SELECT accountno FROM account WHERE userid = $1', [userId]);
+    const accountNumbers = accountsResult.rows.map((row) => row.accountno);
+
+    if (accountNumbers.length === 0) {
+      return res.status(200).json([]); // No accounts, return empty array
+    }
+
+    // Fetch transactions involving any of the user's accounts
+    const transactionsResult = await pool.query(
+      `
+      SELECT 
+        t.transactionid, 
+        t.transactiontime, 
+        t.transactionamount, 
+        t.accountno1, 
+        t.accountno2
+      FROM transaction_history t
+      WHERE t.accountno1 = ANY($1) OR t.accountno2 = ANY($1)
+      ORDER BY t.transactiontime DESC
+      `,
+      [accountNumbers]
+    );
+
+    res.status(200).json(transactionsResult.rows);
+  } catch (error) {
+    console.error('Error fetching user transactions:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint: Fetch Loans for All User Accounts
+app.get('/user/:userId/loans', async (req, res) => {
+  const { userId } = req.params;
+  try {
+    // Fetch loans associated with the user
+    const loansResult = await pool.query(
+      `
+      SELECT 
+        l.loanid, 
+        l.loantype, 
+        l.loanamount, 
+        l.interest, 
+        l.duration, 
+        l.issuedate, 
+        b.bankname AS issuedby
+      FROM loan l
+      JOIN bank b ON l.bankid = b.bankid
+      WHERE l.userid = $1
+      ORDER BY l.issuedate DESC
+      `,
+      [userId]
+    );
+
+    res.status(200).json(loansResult.rows);
+  } catch (error) {
+    console.error('Error fetching user loans:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Start the Express server
 app.listen(port, async () => {
   console.log(`Server is starting on http://localhost:${port}`);

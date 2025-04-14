@@ -70,6 +70,23 @@
   background: #003366;
 }
 
+.nav-button {
+  display: block;
+  padding: 10px 20px;
+  background: #004080;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease;
+}
+
+.nav-button:hover {
+  background: #003366;
+}
+
 .data-overview {
   margin-top: 20px;
 }
@@ -93,4 +110,64 @@
 
 .data-card p {
   margin: 0;
+}
+
+.dashboard-stats {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0;
+}
+
+.stat-card {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  width: 200px;
+}
+
+.stat-card h4 {
+  margin: 0 0 10px;
+  color: #004080;
+}
+
+.stat-card p {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0;
+}
+
+.top-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.back-button,
+.logout-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.back-button {
+  background-color: #f0ad4e;
+  color: white;
+}
+
+.back-button:hover {
+  background-color: #ec971f;
+}
+
+.logout-button {
+  background-color: #d9534f;
+  color: white;
+}
+
+.logout-button:hover {
+  background-color: #c9302c;
 }
