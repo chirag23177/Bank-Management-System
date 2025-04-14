@@ -1,150 +1,195 @@
-# 🏦 Bank Management System – DBMS Project
 
-A full-stack Bank Management System built for a Database Management Systems (DBMS) course project. The system provides a GUI interface for customers and employees to view and manage banking operations such as viewing personal details, accounts, transactions, loans, and transferring funds.
+# Bank Management System
 
----
+## Project Overview
 
-## 📚 Description
-
-This system enables a bank to manage and streamline key operations like:
-
-- Storing and retrieving customer and employee information
-- Managing multiple bank accounts and transactions
-- Tracking loans
-- Executing custom SQL queries securely
-- Transferring funds between accounts in real-time
-
-It integrates a PostgreSQL database with a Node.js/Express backend and a React frontend to deliver a smooth, user-friendly experience.
+The **Bank Management System** is a web-based application designed to manage banking operations efficiently. It provides functionalities for both employees and users (customers) of the bank. Employees can manage users, accounts, loans, and other banking data, while users can view their accounts, transactions, and loans, and perform fund transfers.
 
 ---
 
-## 🛠️ Tech Stack
+## Features
 
-| Layer       | Technology                |
-|------------|---------------------------|
-| Frontend   | React (JavaScript, JSX)   |
-| Backend    | Node.js, Express.js       |
-| Database   | PostgreSQL (via pgAdmin4) |
-| API Comm   | REST (Fetch API / AJAX)   |
+### User Features:
+- **Dashboard:** View user details, accounts, transactions, and loans.
+- **Fund Transfer:** Transfer funds between accounts with real-time balance updates.
+- **Loan Details:** View loan details including loan type, amount, interest, duration, and issuing bank.
+- **Transactions:** View all transactions associated with the user's accounts.
 
----
+### Employee Features:
+- **Dashboard:** View employee details and statistics, including total users, accounts, loans, and branches.
+- **User Management:** View and manage user details.
+- **Account Management:** View and manage account details.
+- **Loan Management:** View and manage loan details.
+- **Custom Queries:** Execute custom SQL queries for advanced operations.
 
-## ✨ Features
 
-- Customer and Employee Login Dashboards
-- View personal info, accounts, transactions, and loans
-- Transfer funds securely between accounts (with locking and rollback)
-- Employee panel to view branch-specific data and run custom SQL queries
-- Clean and interactive UI
 
 ---
 
-## 📁 Project Structure
+## Technologies Used
 
-```
-bank-project/
-├── bank-frontend/         # React Frontend
-│   ├── src/
-│   │   ├── App.js
-│   │   ├── index.js
-│   │   └── components/
-│   │       ├── LoginPage.js
-│   │       ├── CustomerDashboard.js
-│   │       ├── EmployeeDashboard.js
-│   │       ├── TransferFunds.js
-│   │       └── CustomQuery.js
-│   └── public/
-├── bank-backend/          # Node.js + Express Backend
-│   └── index.js
-└── README.md
-```
+### Frontend:
+- **React.js:** For building the user interface.
+- **CSS:** For styling the application.
+
+### Backend:
+- **Node.js:** For building the server-side application.
+- **Express.js:** For handling API requests.
+- **PostgreSQL:** For managing the database (with pgAdmin4 for administration).
 
 ---
 
-## 🧑‍💻 How to Run the Project
+## Installation and Setup
 
-### 📦 Prerequisites
+### Prerequisites:
+- **Node.js** (v14 or higher)
+- **PostgreSQL** (v12 or higher)
+- **npm** (Node Package Manager)
 
-- Node.js & npm installed → [https://nodejs.org](https://nodejs.org)
-- PostgreSQL and pgAdmin4 installed & running
-- Database created with required schema & populated data
+### Steps:
 
----
+1. **Clone the Repository:**
+   ```bash
+   git clone https://github.com/your-username/Bank-Management-System.git
+   cd Bank-Management-System
+   ```
 
-### 🔌 Database Setup (PostgreSQL)
+2. **Set Up the Backend:**
+   - Navigate to the backend directory:
+     ```bash
+     cd bank-backend
+     ```
+   - Install dependencies:
+     ```bash
+     npm install
+     ```
+   - **Configure the PostgreSQL Database:**  
+     Edit `index.js` to include your database credentials. For example:
+     ```javascript
+     const pool = new Pool({
+       user: 'your-username',    // e.g., 'postgres'
+       host: 'localhost',
+       database: 'bank',
+       password: 'your-password',
+       port: 5432,
+     });
+     ```
+   - **Endpoints Implemented:**  
+     - `/customer/:customerId` – Fetch customer details.
+     - `/customer/:customerId/accounts` – Fetch accounts for a user.
+     - `/customer/:customerId/transactions` – Fetch transactions for a user.
+     - `/customer/:customerId/loans` – Fetch loans for a user.
+     - `/transfer-funds` – Process a fund transfer between accounts.
+     - `/employee/:employeeid` – Fetch employee details.
+     - `/custom-query` – Execute custom SQL queries.
+   - Start the backend server:
+     ```bash
+     node index.js
+     ```
 
-Ensure your database is created with:
-- Tables like `BANK`, `BRANCH`, `ACCOUNT`, `USERS`, `EMPLOYEE`, `TRANSACTION_HISTORY`, `LOAN`, etc.
-- Use `BankSchema.sql` and `BankData.sql` files provided.
+3. **Set Up the Frontend:**
+   - Navigate to the frontend directory:
+     ```bash
+     cd ../bank-frontend
+     ```
+   - Install dependencies:
+     ```bash
+     npm install
+     ```
+   - Start the frontend server:
+     ```bash
+     npm start
+     ```
 
-Set up your DB credentials:
-```
-DB_HOST=localhost
-DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD="Your Password"
-DB_NAME="Your Database Name"
-```
-
----
-
-### 🖥️ Backend Setup (Express + PostgreSQL)
-
-```bash
-cd bank-backend
-npm install
-node index.js
-```
-
-✅ Should log: `Server is running on http://localhost:5000`
-
----
-
-### 🌐 Frontend Setup (React)
-
-```bash
-cd bank-frontend
-npm install
-npm start
-```
-
-✅ React app runs at: `http://localhost:3000`
-
----
-
-### 🔄 Transfer Fund Functionality
-
-- Accessible via the **Customer Dashboard**
-- Inputs:
-  - Source Account
-  - Target Account
-  - Amount
-- Backend handles:
-  - Locking tables
-  - Deducting balance (with validation)
-  - Recording transaction
-  - Committing or rolling back safely
-
----
-
-## 📸 UI Preview
-
-*(Add screenshots of Login Page, Customer Dashboard, Transfer Funds form here if you want)*
+4. **Access the Application:**
+   - Open your browser and navigate to:
+     ```
+     http://localhost:3000
+     ```
 
 ---
 
-## 💡 Notes
+## Project Structure
 
-- Frontend communicates with backend via `http://localhost:5000` using REST APIs
-- CORS enabled in backend to allow cross-origin access
-- PostgreSQL queries are parameterized to prevent SQL injection
+### Backend (`bank-backend`):
+- **`index.js`**: Main server file handling API endpoints.
+- **Key Endpoints**:
+  - **Customer Endpoints:**
+    - `/customer/:customerId` – Fetch customer details.
+    - `/customer/:customerId/accounts` – Fetch accounts.
+    - `/customer/:customerId/transactions` – Fetch transactions.
+    - `/customer/:customerId/loans` – Fetch loans.
+  - **Transfer Endpoint:**
+    - `/transfer-funds` – Executes a transaction that locks account tables, updates balances, and records transaction history.
+  - **Employee Endpoints:**
+    - `/employee/:employeeid` – Fetch employee details.
+  - **Custom Query Endpoint:**
+    - `/custom-query` – Allows execution of custom SQL queries.
+
+### Frontend (`bank-frontend`):
+- **`src/components/`**:
+  - `CustomerDashboard.js` – User dashboard component showing personal details, accounts, transactions, loans, and a link to the Transfer Funds page.
+  - `EmployeeDashboard.js` – Employee dashboard component for managing users, accounts, and viewing statistics.
+  - `TransferFunds.js` – Fund transfer component that accepts source account, destination account, and transfer amount.
+  - `CustomQuery.js` – Component to execute custom SQL queries.
+  - `LoginPage.js` – Component for user/employee login.
+- **`src/App.js`** – Main application file for routing.
+- **`src/App.css`** (or your custom CSS file) – Global styling for the application.
+- **Example CSS Styles:**  
+  (Includes classes such as `customer-dashboard-container`, `dashboard-header`, and `transfer-button` for a polished UI.)
 
 ---
 
-## 🤝 Acknowledgements
+## Usage
 
-- Project by Chirag Yadav, IIIT-Delhi  
-- Guided by DBMS course curriculum  
+### For Users:
+1. **Login:**  
+   Log in with your user credentials.
+2. **Dashboard:**  
+   View your personal details, accounts, transactions, and loans on the dashboard.
+3. **Fund Transfer:**  
+   Navigate to the **Transfer Funds** page using the dedicated button, enter your source account, destination account, and the amount, and then execute the transfer.
+
+### For Employees:
+1. **Login:**  
+   Log in with your employee credentials.
+2. **Dashboard:**  
+   View your details and overall branch statistics.
+3. **Management:**  
+   Manage user details, account data, and loan details.
+4. **Custom Queries:**  
+   Use the **Custom Query** tool for advanced SQL operations.
+
+---
+
+## Screenshots
+![login image](./screenshots/login.png)
+
+### User Dashboard:
+- Displays user details, accounts, transactions, and loans.
+![user dashboard image](./screenshots/user-dashboard.png)
+
+- Includes a dedicated section for fund transfers resembling the provided design.
+![transfer fund image](./screenshots/transfer-funds.png)
 
 
+### Employee Dashboard:
+- Displays employee details and statistics for managing branch operations.
+![employee dashboard image](./screenshots/employee-dahsboard.png)
+
+- Provides custom query execution capabilities.
+![custom query image](./screenshots/custom-query.png)
+
+---
+
+
+
+## Contributors
+
+- Chirag Yadav
+- Abhishek Rao
+- Aryamaan Singh
+- Aryan Dahiya
+
+---
 
