@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './CustomQuery.css'; // Add a CSS file for custom styles
 
 function CustomQuery() {
   const [query, setQuery] = useState('');
@@ -28,103 +29,74 @@ function CustomQuery() {
     }
   };
 
-  /**
-   * Renders the query result as a table.
-   * Automatically generates columns from the keys in the first row.
-   */
-  const renderTable = () => {
-    // If result isn't an array or is empty, display a message
-    if (!Array.isArray(result) || result.length === 0) {
-      return <p>No data to display.</p>;
-    }
+  const renderResult = () => {
+    if (!result) return null;
 
-    // Extract column headers from the keys of the first row
-    const columns = Object.keys(result[0]);
-
-    return (
-      <table className="table" style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr>
-            {columns.map((col) => (
-              <th
-                key={col}
-                style={{
-                  border: '1px solid #ddd',
-                  padding: '8px',
-                  backgroundColor: '#f2f2f2',
-                  textTransform: 'capitalize',
-                }}
-              >
-                {col}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {result.map((row, rowIndex) => (
-            <tr key={rowIndex} style={{ border: '1px solid #ddd' }}>
-              {columns.map((col) => (
-                <td key={col} style={{ border: '1px solid #ddd', padding: '8px' }}>
-                  {row[col]}
-                </td>
+    if (Array.isArray(result) && result.length > 0) {
+      // Render as a table if the result is an array of objects
+      const headers = Object.keys(result[0]);
+      return (
+        <table className="query-result-table">
+          <thead>
+            <tr>
+              {headers.map((header) => (
+                <th key={header}>{header}</th>
               ))}
             </tr>
+          </thead>
+          <tbody>
+            {result.map((row, index) => (
+              <tr key={index}>
+                {headers.map((header) => (
+                  <td key={header}>{row[header]}</td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      );
+    } else if (typeof result === 'object') {
+      // Render as key-value pairs if the result is a single object
+      return (
+        <div className="query-result-object">
+          {Object.entries(result).map(([key, value]) => (
+            <p key={key}>
+              <strong>{key}:</strong> {value}
+            </p>
           ))}
-        </tbody>
-      </table>
-    );
+        </div>
+      );
+    } else {
+      // Render as plain text for other types of results
+      return <pre>{JSON.stringify(result, null, 2)}</pre>;
+    }
   };
 
   return (
-    <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-      <header>
-        <h1>SQL Query Tool</h1>
+    <div className="custom-query-container">
+      <header className="custom-query-header">
+        <h1>Custom Query</h1>
+        <p>Run your SQL queries directly and view the results below.</p>
       </header>
-
-      {/* Query Editor */}
-      <form onSubmit={handleRunQuery} style={{ marginBottom: '20px' }}>
-        <label htmlFor="query">
-          <strong>Enter SQL Query:</strong>
-        </label>
-        <textarea
-          id="query"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          rows="6"
-          style={{
-            width: '100%',
-            padding: '10px',
-            marginTop: '5px',
-            marginBottom: '10px',
-            fontFamily: 'monospace',
-          }}
-          placeholder="SELECT * FROM users;"
-          required
-        ></textarea>
-        <button
-          type="submit"
-          style={{
-            padding: '10px 20px',
-            backgroundColor: '#007BFF',
-            color: '#fff',
-            border: 'none',
-            cursor: 'pointer',
-          }}
-        >
+      <form className="custom-query-form" onSubmit={handleRunQuery}>
+        <div className="form-group">
+          <label htmlFor="query">Enter SQL Query:</label>
+          <textarea
+            id="query"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            rows="6"
+            placeholder="Enter your SQL query here..."
+            required
+          ></textarea>
+        </div>
+        <button type="submit" className="run-query-button">
           Run Query
         </button>
       </form>
-
-      {/* Status / Message */}
-      {message && (
-        <p style={{ marginBottom: '20px', fontWeight: 'bold', color: message.includes('Error') ? 'red' : 'green' }}>
-          {message}
-        </p>
-      )}
-
-      {/* Query Results */}
-      <div style={{ backgroundColor: '#fff', padding: '10px', borderRadius: '4px' }}>
-        {result && renderTable()}
+      {message && <p className="query-message">{message}</p>}
+      <div className="query-result">
+        {renderResult()}
       </div>
     </div>
   );

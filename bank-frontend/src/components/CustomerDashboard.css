@@ -1,0 +1,108 @@
+.customer-dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Roboto', Arial, sans-serif;
+  color: #333;
+}
+
+.dashboard-header {
+  background-color: #004080;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 2.5rem;
+}
+
+.customer-info {
+  margin-bottom: 20px;
+}
+
+.info-card {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.info-card p {
+  margin: 10px 0;
+}
+
+.accounts-section,
+.transactions-section,
+.loans-section,
+.transfer-funds-section {
+  margin-bottom: 20px;
+}
+
+.accounts-section h3,
+.transactions-section h3,
+.loans-section h3,
+.transfer-funds-section h3 {
+  color: #004080;
+  margin-bottom: 10px;
+}
+
+.data-card {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+}
+
+.data-card p {
+  margin: 0;
+}
+
+.loading-message {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #666;
+}
+
+.transfer-form label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.transfer-form input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.transfer-button {
+  display: inline-block;
+  background-color: #004080;
+  color: white;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.transfer-button:hover {
+  background-color: #003366;
+}
+
+.transfer-message {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #004080;
+  text-align: center;
+}
