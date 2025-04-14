@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './CustomerDashboard.css'; // Keep your CSS styling
 
 function CustomerDashboard() {
   const { customerId } = useParams();
+  const navigate = useNavigate();
 
   const [customerInfo, setCustomerInfo] = useState(null);
   const [accounts, setAccounts] = useState([]);
@@ -47,8 +48,20 @@ function CustomerDashboard() {
     window.location.href = 'http://localhost:3000/transfer-funds';
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const handleLogout = () => {
+    navigate('/');
+  };
+
   return (
     <div className="customer-dashboard-container">
+      <div className="top-buttons">
+        <button onClick={handleBack} className="back-button">Back</button>
+        <button onClick={handleLogout} className="logout-button">Logout</button>
+      </div>
       <header className="dashboard-header">
         <h1>Customer Dashboard</h1>
       </header>

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom'; // Import useNavigate
 import './EmployeeDashboard.css'; // Add a CSS file for custom styles
 
 function EmployeeDashboard() {
   const { employeeId } = useParams(); // Extract employeeId from the URL
+  const navigate = useNavigate(); // For navigation
   const [employeeInfo, setEmployeeInfo] = useState(null); // Initialize as null
   const [totalUsers, setTotalUsers] = useState(0);
   const [totalAccounts, setTotalAccounts] = useState(0);
@@ -76,6 +77,14 @@ function EmployeeDashboard() {
     fetchEmployeeInfo();
     fetchDashboardStats();
   }, [employeeId]);
+
+  const handleBack = () => {
+    navigate(-1); // Go back to the previous page
+  };
+
+  const handleLogout = () => {
+    navigate('/'); // Redirect to the login page
+  };
 
   const fetchUsers = async () => {
     try {
@@ -163,6 +172,12 @@ function EmployeeDashboard() {
 
   return (
     <div className="dashboard-container">
+      {/* Back and Logout Buttons */}
+      <div className="top-buttons">
+        <button onClick={handleBack} className="back-button">Back</button>
+        <button onClick={handleLogout} className="logout-button">Logout</button>
+      </div>
+
       <header className="dashboard-header">
         <h1>Employee Dashboard</h1>
         {employeeInfo ? (
