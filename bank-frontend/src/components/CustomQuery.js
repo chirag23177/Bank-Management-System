@@ -28,33 +28,104 @@ function CustomQuery() {
     }
   };
 
+  /**
+   * Renders the query result as a table.
+   * Automatically generates columns from the keys in the first row.
+   */
+  const renderTable = () => {
+    // If result isn't an array or is empty, display a message
+    if (!Array.isArray(result) || result.length === 0) {
+      return <p>No data to display.</p>;
+    }
+
+    // Extract column headers from the keys of the first row
+    const columns = Object.keys(result[0]);
+
+    return (
+      <table className="table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            {columns.map((col) => (
+              <th
+                key={col}
+                style={{
+                  border: '1px solid #ddd',
+                  padding: '8px',
+                  backgroundColor: '#f2f2f2',
+                  textTransform: 'capitalize',
+                }}
+              >
+                {col}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {result.map((row, rowIndex) => (
+            <tr key={rowIndex} style={{ border: '1px solid #ddd' }}>
+              {columns.map((col) => (
+                <td key={col} style={{ border: '1px solid #ddd', padding: '8px' }}>
+                  {row[col]}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  };
+
   return (
-    <div className="container">
+    <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
       <header>
-        <h1>Custom Query</h1>
+        <h1>SQL Query Tool</h1>
       </header>
-      <form onSubmit={handleRunQuery}>
-        <div>
-          <label>Enter SQL Query:</label>
-          <textarea
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            rows="6"
-            style={{ width: '100%', padding: '10px', marginTop: '5px' }}
-            placeholder="Enter your SQL query here..."
-            required
-          ></textarea>
-        </div>
-        <button type="submit" style={{ marginTop: '10px', padding: '10px 20px' }}>
+
+      {/* Query Editor */}
+      <form onSubmit={handleRunQuery} style={{ marginBottom: '20px' }}>
+        <label htmlFor="query">
+          <strong>Enter SQL Query:</strong>
+        </label>
+        <textarea
+          id="query"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          rows="6"
+          style={{
+            width: '100%',
+            padding: '10px',
+            marginTop: '5px',
+            marginBottom: '10px',
+            fontFamily: 'monospace',
+          }}
+          placeholder="SELECT * FROM users;"
+          required
+        ></textarea>
+        <button
+          type="submit"
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#007BFF',
+            color: '#fff',
+            border: 'none',
+            cursor: 'pointer',
+          }}
+        >
           Run Query
         </button>
       </form>
-      {message && <p style={{ marginTop: '10px' }}>{message}</p>}
-      {result && (
-        <pre style={{ backgroundColor: '#f4f4f4', padding: '10px', marginTop: '10px' }}>
-          {JSON.stringify(result, null, 2)}
-        </pre>
+
+      {/* Status / Message */}
+      {message && (
+        <p style={{ marginBottom: '20px', fontWeight: 'bold', color: message.includes('Error') ? 'red' : 'green' }}>
+          {message}
+        </p>
       )}
+
+      {/* Query Results */}
+      <div style={{ backgroundColor: '#fff', padding: '10px', borderRadius: '4px' }}>
+        {result && renderTable()}
+      </div>
     </div>
   );
 }
