@@ -44,7 +44,7 @@ function CustomerDashboard() {
   }, [customerId]);
 
   const redirectToTransferPage = () => {
-    window.location.href = 'http://localhost:3002/transfer-funds';
+    window.location.href = 'http://localhost:3000/transfer-funds';
   };
 
   return (

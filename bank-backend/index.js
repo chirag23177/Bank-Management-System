@@ -188,6 +188,50 @@ app.post('/transfer-funds', async (req, res) => {
     }
 });
 
+// ---------- Endpoint: Fetch Users ---------- //
+app.get('/users', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT userid, name, address FROM users'); // Include the address field
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// ---------- Endpoint: Fetch Accounts ---------- //
+app.get('/accounts', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT accountno FROM account');
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching accounts:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// ---------- Endpoint: Fetch Loans ---------- //
+app.get('/loans', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT loanid FROM loans');
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching loans:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// ---------- Endpoint: Fetch Branches ---------- //
+app.get('/branches', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT branchid FROM branches');
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching branches:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Start the Express server
 app.listen(port, async () => {
   console.log(`Server is starting on http://localhost:${port}`);

@@ -5,26 +5,28 @@ import './EmployeeDashboard.css'; // Add a CSS file for custom styles
 function EmployeeDashboard() {
   const { employeeId } = useParams(); // Extract employeeId from the URL
   const [employeeInfo, setEmployeeInfo] = useState(null); // Initialize as null
-  const [customers, setCustomers] = useState([]);
-  const [accounts, setAccounts] = useState([]);
-  const [loans, setLoans] = useState([]);
-  const [bankInfo, setBankInfo] = useState({});
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [totalAccounts, setTotalAccounts] = useState(0);
+  const [activeLoans, setActiveLoans] = useState(0);
+  const [totalBranches, setTotalBranches] = useState(0);
+  const [users, setUsers] = useState([]); // State to store users
+  const [showUsers, setShowUsers] = useState(false); // State to toggle user list visibility
 
   useEffect(() => {
     // Fetch employee information from the backend
     const fetchEmployeeInfo = async () => {
       try {
         const response = await fetch('http://localhost:5000/employee/login', {
-          method: 'POST', // Use POST method as defined in the backend
+          method: 'POST',
           headers: {
-            'Content-Type': 'application/json', // Set the content type to JSON
+            'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ employeeId }), // Send employeeId in the request body
+          body: JSON.stringify({ employeeId }),
         });
 
         if (response.ok) {
           const data = await response.json();
-          setEmployeeInfo(data); // Update the employeeInfo state with the fetched data
+          setEmployeeInfo(data);
         } else {
           console.error('Error fetching employee information');
         }
@@ -33,8 +35,56 @@ function EmployeeDashboard() {
       }
     };
 
+    // Fetch dashboard statistics
+    const fetchDashboardStats = async () => {
+      try {
+        const usersResponse = await fetch('http://localhost:5000/users');
+        const accountsResponse = await fetch('http://localhost:5000/accounts');
+        const loansResponse = await fetch('http://localhost:5000/loans');
+        const branchesResponse = await fetch('http://localhost:5000/branches');
+
+        if (usersResponse.ok) {
+          const usersData = await usersResponse.json();
+          setTotalUsers(usersData.length);
+        }
+
+        if (accountsResponse.ok) {
+          const accountsData = await accountsResponse.json();
+          setTotalAccounts(accountsData.length);
+        }
+
+        if (loansResponse.ok) {
+          const loansData = await loansResponse.json();
+          setActiveLoans(loansData.length);
+        }
+
+        if (branchesResponse.ok) {
+          const branchesData = await branchesResponse.json();
+          setTotalBranches(branchesData.length);
+        }
+      } catch (error) {
+        console.error('Error fetching dashboard statistics:', error);
+      }
+    };
+
     fetchEmployeeInfo();
+    fetchDashboardStats();
   }, [employeeId]);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/users');
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data);
+        setShowUsers(true); // Show the user list
+      } else {
+        console.error('Error fetching users');
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
 
   return (
     <div className="dashboard-container">
@@ -60,68 +110,72 @@ function EmployeeDashboard() {
         )}
       </section>
 
+      {/* UI Cards for Dashboard Statistics */}
+      <section className="dashboard-stats">
+        <div className="stat-card">
+          <h4>Total Users</h4>
+          <p>{totalUsers}</p>
+        </div>
+        <div className="stat-card">
+          <h4>Total Accounts</h4>
+          <p>{totalAccounts}</p>
+        </div>
+        <div className="stat-card">
+          <h4>Active Loans</h4>
+          <p>{activeLoans}</p>
+        </div>
+        <div className="stat-card">
+          <h4>Branches</h4>
+          <p>{totalBranches}</p>
+        </div>
+      </section>
+
+      {/* Navigation Buttons */}
       <nav className="dashboard-nav">
         <ul className="nav-tabs">
-          <li><Link to="#">Customers</Link></li>
-          <li><Link to="#">Accounts</Link></li>
-          <li><Link to="#">Loans</Link></li>
-          <li><Link to="#">Bank Info</Link></li>
-          <li><Link to="/custom-query">Custom Query</Link></li>
+          <li>
+            <button
+              onClick={fetchUsers}
+              className="nav-button"
+            >
+              Users
+            </button>
+          </li>
+          <li><Link to="#" className="nav-button">Accounts</Link></li>
+          <li><Link to="#" className="nav-button">Loans</Link></li>
+          <li><Link to="#" className="nav-button">Bank Info</Link></li>
+          <li><Link to="/custom-query" className="nav-button">Custom Query</Link></li>
         </ul>
       </nav>
 
-      <section className="data-overview">
-        <h3>Data Overview</h3>
-        <div className="data-section">
-          <h4>Customers in your Branch</h4>
-          {customers.length === 0 ? (
-            <p>No customers to display.</p>
+      {/* Display Users */}
+      {showUsers && (
+        <section className="data-section">
+          <h4>Users</h4>
+          {users.length > 0 ? (
+            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+              <thead>
+                <tr>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>User ID</th>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Name</th>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Address</th> {/* Add Address column */}
+                </tr>
+              </thead>
+              <tbody>
+                {users.map((user) => (
+                  <tr key={user.userid}>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{user.userid}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{user.name}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{user.address}</td> {/* Display Address */}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           ) : (
-            customers.map(c => (
-              <div key={c.UserID} className="data-card">
-                <p>{c.Name} ({c.UserID})</p>
-              </div>
-            ))
+            <p>No users to display.</p>
           )}
-        </div>
-
-        <div className="data-section">
-          <h4>Accounts</h4>
-          {accounts.length === 0 ? (
-            <p>No accounts to display.</p>
-          ) : (
-            accounts.map(a => (
-              <div key={a.AccountNo} className="data-card">
-                <p>Account {a.AccountNo} - Balance: ₹{a.Balance}</p>
-              </div>
-            ))
-          )}
-        </div>
-
-        <div className="data-section">
-          <h4>Loans</h4>
-          {loans.length === 0 ? (
-            <p>No loans to display.</p>
-          ) : (
-            loans.map(l => (
-              <div key={l.LoanID} className="data-card">
-                <p>Loan {l.LoanID}: ₹{l.LoanAmount}</p>
-              </div>
-            ))
-          )}
-        </div>
-
-        <div className="data-section">
-          <h4>Bank Information</h4>
-          {Object.keys(bankInfo).length === 0 ? (
-            <p>No bank info to display.</p>
-          ) : (
-            <div className="data-card">
-              <p>{bankInfo.BankName} with {bankInfo.NoOfBranches} branches.</p>
-            </div>
-          )}
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }
