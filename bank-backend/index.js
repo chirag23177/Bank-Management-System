@@ -19,7 +19,6 @@ const pool = new Pool({
   port: 5432,                  // PostgreSQL default port
 });
 
-// ---------- Check Database Connection on Server Start ---------- //
 const checkDatabaseConnection = async () => {
   try {
     await pool.query('SELECT 1'); // Simple query to check connection
