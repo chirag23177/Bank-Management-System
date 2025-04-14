@@ -82,7 +82,7 @@
 
 
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 
 function CustomerDashboard() {
     const { customerId } = useParams();
@@ -188,6 +188,14 @@ function CustomerDashboard() {
                     <p>No loans available.</p>
                 )}
             </section>
+            {/* Link to the Transfer Funds page */}
+            <div style={{ marginTop: '20px' }}>
+                <Link to="/transfer-funds">
+                    <button style={{ padding: '10px 20px', backgroundColor: '#28a745', color: '#fff', border: 'none', cursor: 'pointer' }}>
+                        Transfer Funds
+                    </button>
+                </Link>
+            </div>
         </div>
     );
 }

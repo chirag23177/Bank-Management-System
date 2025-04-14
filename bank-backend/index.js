@@ -115,6 +115,58 @@ app.post('/custom-query', async (req, res) => {
   }
 });
 
+
+// ------------------- Transfer Funds Endpoint ------------------- //
+app.post('/transfer-funds', async (req, res) => {
+  const { source_account, target_account, transfer_amount } = req.body;
+  const client = await pool.connect();
+
+  try {
+    await client.query('BEGIN');
+
+    // Lock ACCOUNT and TRANSACTION_HISTORY tables exclusively.
+    await client.query('LOCK TABLE account, transaction_history IN ACCESS EXCLUSIVE MODE');
+
+    // Deduct the transfer amount from the source account if funds are sufficient.
+    const updateSource = await client.query(
+      `UPDATE account
+       SET balance = balance - $1
+       WHERE accountno = $2 AND balance >= $1`,
+      [transfer_amount, source_account]
+    );
+
+    if (updateSource.rowCount === 0) {
+      // Insufficient funds or invalid source account.
+      await client.query('ROLLBACK');
+      return res.status(400).json({ error: "Insufficient funds or invalid source account" });
+    }
+
+    // Add the transfer amount to the target account.
+    await client.query(
+      `UPDATE account
+       SET balance = balance + $1
+       WHERE accountno = $2`,
+      [transfer_amount, target_account]
+    );
+
+    // Insert the transaction record.
+    await client.query(
+      `INSERT INTO transaction_history (transactionamount, transactiontime, branchid, accountno1, accountno2)
+       VALUES ($1, CURRENT_TIMESTAMP, 1, $2, $3)`,
+      [transfer_amount, source_account, target_account]
+    );
+
+    await client.query('COMMIT');
+    res.status(200).json({ message: "Transfer successful" });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    console.error('Transfer Error: ', err);
+    res.status(500).json({ error: "Transfer failed" });
+  } finally {
+    client.release();
+  }
+});
+
 // Start the Express server
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
