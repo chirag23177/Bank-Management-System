@@ -6,14 +6,23 @@ function LoginPage() {
   const [loginType, setLoginType] = useState('customer');
   const [id, setId] = useState('');
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    if (loginType === 'customer') {
-      // In a real scenario, validate the customer via API call.
-      navigate(`/customer-dashboard/${id}`);
-    } else {
-      // In a real scenario, validate the employee via API call.
-      navigate(`/employee-dashboard/${id}`);
+  const handleCustomerLogin = async (customerId) => {
+    try {
+      const response = await fetch('http://localhost:5000/customer/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ customerId }),
+      });
+      if(response.ok) {
+        const customerData = await response.json();
+        // Save the customer data to state or context and redirect to the dashboard
+        console.log('Customer logged in:', customerData);
+      } else {
+        // Handle error, e.g., customer not found
+        console.error('Customer not found');
+      }
+    } catch (error) {
+      console.error('Error logging in:', error);
     }
   };
 

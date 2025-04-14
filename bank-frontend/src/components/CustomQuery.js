@@ -7,23 +7,24 @@ function CustomQuery() {
 
   const handleRunQuery = async (e) => {
     e.preventDefault();
-    // Send the custom SQL query to your backend endpoint; this endpoint
-    // should be secured and validate the query to avoid SQL injection.
     try {
       const response = await fetch('http://localhost:5000/custom-query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query })
+        body: JSON.stringify({ query }),
       });
-      if(response.ok) {
+      if (response.ok) {
         const data = await response.json();
-        setResult(JSON.stringify(data, null, 2));
+        setResult(data);
         setMessage('Query executed successfully.');
       } else {
         setMessage('Error executing query.');
+        setResult(null);
       }
     } catch (error) {
+      console.error('Error executing custom query:', error);
       setMessage('Error: Could not connect to the server.');
+      setResult(null);
     }
   };
 
@@ -39,14 +40,21 @@ function CustomQuery() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             rows="6"
-            style={{ width: '100%' }}
+            style={{ width: '100%', padding: '10px', marginTop: '5px' }}
+            placeholder="Enter your SQL query here..."
             required
           ></textarea>
         </div>
-        <button type="submit">Run Query</button>
+        <button type="submit" style={{ marginTop: '10px', padding: '10px 20px' }}>
+          Run Query
+        </button>
       </form>
-      {message && <p>{message}</p>}
-      {result && <pre>{result}</pre>}
+      {message && <p style={{ marginTop: '10px' }}>{message}</p>}
+      {result && (
+        <pre style={{ backgroundColor: '#f4f4f4', padding: '10px', marginTop: '10px' }}>
+          {JSON.stringify(result, null, 2)}
+        </pre>
+      )}
     </div>
   );
 }
