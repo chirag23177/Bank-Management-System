@@ -24,7 +24,7 @@ const pool = new Pool({
 app.get('/', async (req, res) => {
   try {
     // Test query; adjust the table name if needed
-    const result = await pool.query('SELECT * FROM "BANK";');
+    const result = await pool.query('SELECT * FROM bank;');
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error executing query:', error);
