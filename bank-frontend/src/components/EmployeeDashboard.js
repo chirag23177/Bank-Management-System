@@ -11,6 +11,8 @@ function EmployeeDashboard() {
   const [totalBranches, setTotalBranches] = useState(0);
   const [users, setUsers] = useState([]); // State to store users
   const [showUsers, setShowUsers] = useState(false); // State to toggle user list visibility
+  const [accounts, setAccounts] = useState([]); // State to store accounts
+  const [showAccounts, setShowAccounts] = useState(false); // State to toggle account list visibility
 
   useEffect(() => {
     // Fetch employee information from the backend
@@ -50,17 +52,17 @@ function EmployeeDashboard() {
 
         if (accountsResponse.ok) {
           const accountsData = await accountsResponse.json();
-          setTotalAccounts(accountsData.length);
+          setTotalAccounts(accountsData.length); // Update total accounts count
         }
 
         if (loansResponse.ok) {
           const loansData = await loansResponse.json();
-          setActiveLoans(loansData.length);
+          setActiveLoans(loansData.length); // Update active loans count
         }
 
         if (branchesResponse.ok) {
           const branchesData = await branchesResponse.json();
-          setTotalBranches(branchesData.length);
+          setTotalBranches(branchesData.length); // Update branches count
         }
       } catch (error) {
         console.error('Error fetching dashboard statistics:', error);
@@ -83,6 +85,21 @@ function EmployeeDashboard() {
       }
     } catch (error) {
       console.error('Error fetching users:', error);
+    }
+  };
+
+  const fetchAccounts = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/accounts');
+      if (response.ok) {
+        const data = await response.json();
+        setAccounts(data);
+        setShowAccounts(true); // Show the account list
+      } else {
+        console.error('Error fetching accounts');
+      }
+    } catch (error) {
+      console.error('Error fetching accounts:', error);
     }
   };
 
@@ -141,7 +158,14 @@ function EmployeeDashboard() {
               Users
             </button>
           </li>
-          <li><Link to="#" className="nav-button">Accounts</Link></li>
+          <li>
+            <button
+              onClick={fetchAccounts}
+              className="nav-button"
+            >
+              Accounts
+            </button>
+          </li>
           <li><Link to="#" className="nav-button">Loans</Link></li>
           <li><Link to="#" className="nav-button">Bank Info</Link></li>
           <li><Link to="/custom-query" className="nav-button">Custom Query</Link></li>
@@ -158,7 +182,7 @@ function EmployeeDashboard() {
                 <tr>
                   <th style={{ border: '1px solid #ccc', padding: '10px' }}>User ID</th>
                   <th style={{ border: '1px solid #ccc', padding: '10px' }}>Name</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Address</th> {/* Add Address column */}
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Address</th>
                 </tr>
               </thead>
               <tbody>
@@ -166,13 +190,46 @@ function EmployeeDashboard() {
                   <tr key={user.userid}>
                     <td style={{ border: '1px solid #ccc', padding: '10px' }}>{user.userid}</td>
                     <td style={{ border: '1px solid #ccc', padding: '10px' }}>{user.name}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{user.address}</td> {/* Display Address */}
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{user.address}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           ) : (
             <p>No users to display.</p>
+          )}
+        </section>
+      )}
+
+      {/* Display Accounts */}
+      {showAccounts && (
+        <section className="data-section">
+          <h4>Accounts</h4>
+          {accounts.length > 0 ? (
+            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+              <thead>
+                <tr>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Account No</th>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>User Name</th>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Branch (ID with Address)</th>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Balance</th>
+                </tr>
+              </thead>
+              <tbody>
+                {accounts.map((account) => (
+                  <tr key={account.accountno}>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{account.accountno}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{account.username}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
+                      {account.branchid} - {account.branchaddress}
+                    </td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{account.balance}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No accounts to display.</p>
           )}
         </section>
       )}

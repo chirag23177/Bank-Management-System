@@ -199,10 +199,20 @@ app.get('/users', async (req, res) => {
   }
 });
 
-// ---------- Endpoint: Fetch Accounts ---------- //
+// Endpoint: Fetch Accounts with User and Branch Details
 app.get('/accounts', async (req, res) => {
   try {
-    const result = await pool.query('SELECT accountno FROM account');
+    const result = await pool.query(`
+      SELECT 
+        a.accountno, 
+        a.balance, 
+        COALESCE(u.name, 'N/A') AS username, 
+        COALESCE(b.branchid, -1) AS branchid, -- Replace NULL with -1 for branchid
+        COALESCE(b.branchadd, 'N/A') AS branchaddress -- Replace NULL with 'N/A' for branchadd
+      FROM account a
+      LEFT JOIN users u ON a.userid = u.userid
+      LEFT JOIN branch b ON a.branchid = b.branchid
+    `);
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching accounts:', error);
@@ -210,10 +220,10 @@ app.get('/accounts', async (req, res) => {
   }
 });
 
-// ---------- Endpoint: Fetch Loans ---------- //
+// Endpoint: Fetch Loans
 app.get('/loans', async (req, res) => {
   try {
-    const result = await pool.query('SELECT loanid FROM loans');
+    const result = await pool.query('SELECT loanid FROM loan'); // Fetch all loans
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching loans:', error);
@@ -221,10 +231,10 @@ app.get('/loans', async (req, res) => {
   }
 });
 
-// ---------- Endpoint: Fetch Branches ---------- //
+// Endpoint: Fetch Branches
 app.get('/branches', async (req, res) => {
   try {
-    const result = await pool.query('SELECT branchid FROM branches');
+    const result = await pool.query('SELECT branchid FROM branch'); // Fetch all branches
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching branches:', error);
