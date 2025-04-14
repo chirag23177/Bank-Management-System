@@ -79,6 +79,12 @@ function EmployeeDashboard() {
 
   const fetchUsers = async () => {
     try {
+      // Reset all visibility states
+      setShowUsers(false);
+      setShowAccounts(false);
+      setShowLoans(false);
+      setShowBanks(false);
+
       const response = await fetch('http://localhost:5000/users');
       if (response.ok) {
         const data = await response.json();
@@ -94,6 +100,12 @@ function EmployeeDashboard() {
 
   const fetchAccounts = async () => {
     try {
+      // Reset all visibility states
+      setShowUsers(false);
+      setShowAccounts(false);
+      setShowLoans(false);
+      setShowBanks(false);
+
       const response = await fetch('http://localhost:5000/accounts');
       if (response.ok) {
         const data = await response.json();
@@ -109,6 +121,12 @@ function EmployeeDashboard() {
 
   const fetchLoans = async () => {
     try {
+      // Reset all visibility states
+      setShowUsers(false);
+      setShowAccounts(false);
+      setShowLoans(false);
+      setShowBanks(false);
+
       const response = await fetch('http://localhost:5000/loans');
       if (response.ok) {
         const data = await response.json();
@@ -124,6 +142,12 @@ function EmployeeDashboard() {
 
   const fetchBanks = async () => {
     try {
+      // Reset all visibility states
+      setShowUsers(false);
+      setShowAccounts(false);
+      setShowLoans(false);
+      setShowBanks(false);
+
       const response = await fetch('http://localhost:5000/banks');
       if (response.ok) {
         const data = await response.json();
