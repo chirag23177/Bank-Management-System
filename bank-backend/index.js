@@ -220,10 +220,23 @@ app.get('/accounts', async (req, res) => {
   }
 });
 
-// Endpoint: Fetch Loans
+// Endpoint: Fetch Loans with User and Bank Details
 app.get('/loans', async (req, res) => {
   try {
-    const result = await pool.query('SELECT loanid FROM loan'); // Fetch all loans
+    const result = await pool.query(`
+      SELECT 
+        l.loanid, 
+        COALESCE(u.name, 'N/A') AS username, 
+        l.loanamount, 
+        l.duration, 
+        l.interest, 
+        l.loantype, 
+        COALESCE(b.bankname, 'N/A') AS bankname, 
+        l.issuedate
+      FROM loan l
+      LEFT JOIN users u ON l.userid = u.userid
+      LEFT JOIN bank b ON l.bankid = b.bankid
+    `);
     res.status(200).json(result.rows);
   } catch (error) {
     console.error('Error fetching loans:', error);

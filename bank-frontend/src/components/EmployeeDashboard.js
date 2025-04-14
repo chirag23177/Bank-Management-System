@@ -13,6 +13,8 @@ function EmployeeDashboard() {
   const [showUsers, setShowUsers] = useState(false); // State to toggle user list visibility
   const [accounts, setAccounts] = useState([]); // State to store accounts
   const [showAccounts, setShowAccounts] = useState(false); // State to toggle account list visibility
+  const [loans, setLoans] = useState([]); // State to store loans
+  const [showLoans, setShowLoans] = useState(false); // State to toggle loan list visibility
 
   useEffect(() => {
     // Fetch employee information from the backend
@@ -103,6 +105,21 @@ function EmployeeDashboard() {
     }
   };
 
+  const fetchLoans = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/loans');
+      if (response.ok) {
+        const data = await response.json();
+        setLoans(data);
+        setShowLoans(true); // Show the loan list
+      } else {
+        console.error('Error fetching loans');
+      }
+    } catch (error) {
+      console.error('Error fetching loans:', error);
+    }
+  };
+
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
@@ -166,7 +183,14 @@ function EmployeeDashboard() {
               Accounts
             </button>
           </li>
-          <li><Link to="#" className="nav-button">Loans</Link></li>
+          <li>
+            <button
+              onClick={fetchLoans}
+              className="nav-button"
+            >
+              Loans
+            </button>
+          </li>
           <li><Link to="#" className="nav-button">Bank Info</Link></li>
           <li><Link to="/custom-query" className="nav-button">Custom Query</Link></li>
         </ul>
@@ -230,6 +254,45 @@ function EmployeeDashboard() {
             </table>
           ) : (
             <p>No accounts to display.</p>
+          )}
+        </section>
+      )}
+
+      {/* Display Loans */}
+      {showLoans && (
+        <section className="data-section">
+          <h4>Loans</h4>
+          {loans.length > 0 ? (
+            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+              <thead>
+                <tr>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Loan ID</th>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>User Name</th>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Loan Amount</th>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Duration</th>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Interest</th>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Loan Type</th>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Issued by Bank</th>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Issue Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                {loans.map((loan) => (
+                  <tr key={loan.loanid}>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.loanid}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.username}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.loanamount}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.duration}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.interest}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.loantype}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.bankname}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.issuedate}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No loans to display.</p>
           )}
         </section>
       )}
