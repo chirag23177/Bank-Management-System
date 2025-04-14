@@ -255,6 +255,24 @@ app.get('/branches', async (req, res) => {
   }
 });
 
+// Endpoint: Fetch Bank Information
+app.get('/banks', async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        bankid, 
+        bankname, 
+        bankmoney, 
+        noofbranches
+      FROM bank
+    `);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching bank information:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Start the Express server
 app.listen(port, async () => {
   console.log(`Server is starting on http://localhost:${port}`);

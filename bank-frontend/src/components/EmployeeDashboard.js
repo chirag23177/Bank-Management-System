@@ -15,6 +15,8 @@ function EmployeeDashboard() {
   const [showAccounts, setShowAccounts] = useState(false); // State to toggle account list visibility
   const [loans, setLoans] = useState([]); // State to store loans
   const [showLoans, setShowLoans] = useState(false); // State to toggle loan list visibility
+  const [banks, setBanks] = useState([]); // State to store bank information
+  const [showBanks, setShowBanks] = useState(false); // State to toggle bank info visibility
 
   useEffect(() => {
     // Fetch employee information from the backend
@@ -120,6 +122,21 @@ function EmployeeDashboard() {
     }
   };
 
+  const fetchBanks = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/banks');
+      if (response.ok) {
+        const data = await response.json();
+        setBanks(data);
+        setShowBanks(true); // Show the bank info
+      } else {
+        console.error('Error fetching bank information');
+      }
+    } catch (error) {
+      console.error('Error fetching bank information:', error);
+    }
+  };
+
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
@@ -191,7 +208,14 @@ function EmployeeDashboard() {
               Loans
             </button>
           </li>
-          <li><Link to="#" className="nav-button">Bank Info</Link></li>
+          <li>
+            <button
+              onClick={fetchBanks}
+              className="nav-button"
+            >
+              Bank Info
+            </button>
+          </li>
           <li><Link to="/custom-query" className="nav-button">Custom Query</Link></li>
         </ul>
       </nav>
@@ -293,6 +317,37 @@ function EmployeeDashboard() {
             </table>
           ) : (
             <p>No loans to display.</p>
+          )}
+        </section>
+      )}
+
+      {/* Display Bank Information */}
+      {showBanks && (
+        <section className="data-section">
+          <h4>Bank Information</h4>
+          {banks.length > 0 ? (
+            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+              <thead>
+                <tr>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Bank ID</th>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Bank Name</th>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Bank Money</th>
+                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>No of Branches</th>
+                </tr>
+              </thead>
+              <tbody>
+                {banks.map((bank) => (
+                  <tr key={bank.bankid}>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{bank.bankid}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{bank.bankname}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{bank.bankmoney}</td>
+                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{bank.noofbranches}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          ) : (
+            <p>No bank information to display.</p>
           )}
         </section>
       )}
