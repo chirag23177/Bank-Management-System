@@ -276,6 +276,14 @@ function EmployeeDashboard() {
             </button>
           </li>
           <li><Link to="/custom-query" className="nav-button">Custom Query</Link></li>
+          <li>
+            <button
+              onClick={() => navigate(`/employee/${employeeId}/issue-loan`)}
+              className="nav-button"
+            >
+              Issue Loan
+            </button>
+          </li>
         </ul>
       </nav>
 

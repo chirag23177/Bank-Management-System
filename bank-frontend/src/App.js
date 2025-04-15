@@ -6,6 +6,7 @@ import EmployeeDashboard from './components/EmployeeDashboard';
 import CustomQuery from './components/CustomQuery';
 import TransferFunds from './components/TransferFunds';
 import OpenAccount from './components/OpenAccount';
+import IssueLoan from './components/IssueLoan';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route path="/custom-query" element={<CustomQuery />} />
         <Route path="/transfer-funds" element={<TransferFunds />} />
         <Route path="/user/:userId/open-account" element={<OpenAccount />} />
+        <Route path="/employee/:employeeId/issue-loan" element={<IssueLoan />} />
       </Routes>
     </Router>
   );

@@ -543,6 +543,116 @@ app.get('/branches/:bankId', async (req, res) => {
   }
 });
 
+// Endpoint: Fetch User Accounts by Bank ID and User ID
+app.get('/accounts/:bankId/:userId', async (req, res) => {
+  const { bankId, userId } = req.params;
+
+  try {
+    const result = await pool.query(
+      `
+      SELECT a.accountno, a.balance
+      FROM account a
+      JOIN branch b ON a.branchid = b.branchid
+      WHERE b.bankid = $1 AND a.userid = $2
+      `,
+      [bankId, userId]
+    );
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching user accounts:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint: Issue Loan
+app.post('/issue-loan', async (req, res) => {
+  const { userId, accountNo, loanAmount, duration, interest, loanType, employeeId } = req.body;
+
+  try {
+    // Fetch the bank ID and bank money for the employee's branch
+    const bankResult = await pool.query(
+      `
+      SELECT b.bankid, b.bankmoney
+      FROM employee e
+      JOIN branch br ON e.branchid = br.branchid
+      JOIN bank b ON br.bankid = b.bankid
+      WHERE e.employeeid = $1
+      `,
+      [employeeId]
+    );
+
+    if (bankResult.rows.length === 0) {
+      return res.status(404).json({ error: 'Bank not found for the employee.' });
+    }
+
+    const { bankid, bankmoney } = bankResult.rows[0];
+
+    // Check if the loan amount exceeds the bank money
+    if (loanAmount > bankmoney) {
+      return res.status(400).json({ error: 'Loan amount exceeds available bank money.' });
+    }
+
+    // Insert the loan into the loan table
+    const loanResult = await pool.query(
+      `
+      INSERT INTO loan (loanamount, duration, interest, loantype, issuedate, userid, bankid)
+      VALUES ($1, $2, $3, $4, CURRENT_DATE, $5, $6)
+      RETURNING loanid
+      `,
+      [loanAmount, duration, interest, loanType, userId, bankid]
+    );
+
+    // Subtract the loan amount from the bank money
+    await pool.query(
+      `
+      UPDATE bank
+      SET bankmoney = bankmoney - $1
+      WHERE bankid = $2
+      `,
+      [loanAmount, bankid]
+    );
+
+    // Add the loan amount to the user's account balance
+    await pool.query(
+      `
+      UPDATE account
+      SET balance = balance + $1
+      WHERE accountno = $2
+      `,
+      [loanAmount, accountNo]
+    );
+
+    res.status(201).json({ loanId: loanResult.rows[0].loanid });
+  } catch (error) {
+    console.error('Error issuing loan:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint: Fetch Users by Bank ID
+app.get('/users-by-bank/:bankId', async (req, res) => {
+  const { bankId } = req.params;
+
+  try {
+    const result = await pool.query(
+      `
+      SELECT DISTINCT u.userid, u.name, u.address
+      FROM users u
+      JOIN account a ON u.userid = a.userid
+      JOIN branch b ON a.branchid = b.branchid
+      WHERE b.bankid = $1
+      `,
+      [bankId]
+    );
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching users by bank:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Start the Express server
 app.listen(port, async () => {
   console.log(`Server is starting on http://localhost:${port}`);

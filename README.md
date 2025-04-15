@@ -3,7 +3,9 @@
 
 ## Project Overview
 
+
 The **Bank Management System** is a web-based application designed to manage banking operations efficiently. It provides functionalities for both employees and users (customers) of the bank. Employees can manage users, accounts, loans, and other banking data, while users can view their accounts, transactions, and loans, and perform fund transfers.
+
 
 ---
 
@@ -14,17 +16,20 @@ The **Bank Management System** is a web-based application designed to manage ban
 - **Fund Transfer:** Transfer funds between accounts with real-time balance updates.
 - **Loan Details:** View loan details including loan type, amount, interest, duration, and issuing bank.
 - **Transactions:** View all transactions associated with the user's accounts.
+- **Open New Account:** Users can open a new account by selecting a branch and bank, and specifying a starting balance.
 
 ### Employee Features:
 - **Dashboard:** View employee details and statistics, including total users, accounts, loans, and branches.
 - **User Management:** View and manage user details.
 - **Account Management:** View and manage account details.
-- **Loan Management:** View and manage loan details.
+- **Loan Management:** Issue loans to users with proper validations:
+  - Only users and accounts in the employee's bank are eligible.
+  - Loan amount cannot exceed the bank's available money.
+  - Loan amount is deducted from the bank's money and added to the user's account balance.
 - **Custom Queries:** Execute custom SQL queries for advanced operations.
 
-
-
 ---
+
 
 ## Technologies Used
 
@@ -123,6 +128,9 @@ The **Bank Management System** is a web-based application designed to manage ban
     - `/transfer-funds` – Executes a transaction that locks account tables, updates balances, and records transaction history.
   - **Employee Endpoints:**
     - `/employee/:employeeid` – Fetch employee details.
+    - `/users-by-bank/:bankId` – Fetch users associated with a specific bank.
+    - `/accounts/:bankId/:userId` – Fetch accounts for a user in a specific bank.
+    - `/issue-loan` – Issue a loan to a user.
   - **Custom Query Endpoint:**
     - `/custom-query` – Allows execution of custom SQL queries.
 
@@ -131,12 +139,13 @@ The **Bank Management System** is a web-based application designed to manage ban
   - `CustomerDashboard.js` – User dashboard component showing personal details, accounts, transactions, loans, and a link to the Transfer Funds page.
   - `EmployeeDashboard.js` – Employee dashboard component for managing users, accounts, and viewing statistics.
   - `TransferFunds.js` – Fund transfer component that accepts source account, destination account, and transfer amount.
+  - `OpenAccount.js` – Component for users to open a new account.
+  - `IssueLoan.js` – Component for employees to issue loans to users.
   - `CustomQuery.js` – Component to execute custom SQL queries.
   - `LoginPage.js` – Component for user/employee login.
 - **`src/App.js`** – Main application file for routing.
 - **`src/App.css`** (or your custom CSS file) – Global styling for the application.
-- **Example CSS Styles:**  
-  (Includes classes such as `customer-dashboard-container`, `dashboard-header`, and `transfer-button` for a polished UI.)
+
 
 ---
 
@@ -149,6 +158,8 @@ The **Bank Management System** is a web-based application designed to manage ban
    View your personal details, accounts, transactions, and loans on the dashboard.
 3. **Fund Transfer:**  
    Navigate to the **Transfer Funds** page using the dedicated button, enter your source account, destination account, and the amount, and then execute the transfer.
+4. **Open New Account:**
+Open a new account by selecting a branch and bank, and specifying a starting balance.
 
 ### For Employees:
 1. **Login:**  
@@ -157,28 +168,35 @@ The **Bank Management System** is a web-based application designed to manage ban
    View your details and overall branch statistics.
 3. **Management:**  
    Manage user details, account data, and loan details.
+3. **Issue Loan:**  
+   Navigate to the **Issue Loan** page, select a user and account, and provide loan details (amount, duration, interest, type). Submit the loan, which will be added to the database and deducted from the bank's money.
 4. **Custom Queries:**  
    Use the **Custom Query** tool for advanced SQL operations.
 
 ---
 
 ## Screenshots
-![login image](./screenshots/login.png)
+![login image](./screenshots/loginn.png)
 
 ### User Dashboard:
 - Displays user details, accounts, transactions, and loans.
-![user dashboard image](./screenshots/user-dashboard.png)
+![user dashboard image](./screenshots/user_dashboard.jpg)
 
 - Includes a dedicated section for fund transfers resembling the provided design.
-![transfer fund image](./screenshots/transfer-funds.png)
+![transfer fund image](./screenshots/transfer_funds.jpg)
 
+- Includes a dedicated section for opening a New Account.
+![new account image](./screenshots/open_newaccount.png)
 
 ### Employee Dashboard:
 - Displays employee details and statistics for managing branch operations.
-![employee dashboard image](./screenshots/employee-dahsboard.png)
+![employee dashboard image](./screenshots/employee_dahsboard.png)
 
 - Provides custom query execution capabilities.
-![custom query image](./screenshots/custom-query.png)
+![custom query image](./screenshots/custom_query.png)
+
+- Includes issuing Loan functionality.
+![issue loan image](./screenshots/loan.png)
 
 ---
 
