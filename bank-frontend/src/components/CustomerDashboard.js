@@ -141,7 +141,7 @@ function CustomerDashboard() {
         )}
       </section>
 
-      {/* Transfer Funds Button */}
+      {/* Add Open Account Button */}
       <div style={{ marginTop: '20px', textAlign: 'center' }}>
         <button
           onClick={redirectToTransferPage}
@@ -153,10 +153,28 @@ function CustomerDashboard() {
             border: 'none',
             borderRadius: '5px',
             cursor: 'pointer',
-            fontSize: '16px'
+            fontSize: '16px',
+            marginRight: '10px', // Add margin to separate buttons
+            display: 'inline-block', // Ensure buttons are inline
           }}
         >
           Transfer Funds
+        </button>
+        <button
+          onClick={() => navigate(`/user/${userId}/open-account`)}
+          className="open-account-button"
+          style={{
+            padding: '10px 20px',
+            backgroundColor: '#007bff',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontSize: '16px',
+            display: 'inline-block', // Ensure buttons are inline
+          }}
+        >
+          Open a New Account
         </button>
       </div>
 

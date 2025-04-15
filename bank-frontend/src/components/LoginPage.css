@@ -82,3 +82,58 @@ body {
 .login-button:hover {
   background-color: #003366;
 }
+
+.register-form {
+  text-align: center;
+}
+
+.register-input {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.register-input label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.register-input input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.register-button {
+  display: inline-block;
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.register-button:hover {
+  background-color: #218838;
+}
+
+.register-link,
+.switch-to-login {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #004080;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.register-link:hover,
+.switch-to-login:hover {
+  color: #003366;
+}

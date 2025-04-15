@@ -1,0 +1,4 @@
+1. A new user can register himself.
+2. a user can open a new account.
+3. User can apply for laon.
+4. employee can give a loan to a user.

@@ -94,7 +94,12 @@ function EmployeeDashboard() {
       setShowLoans(false);
       setShowBanks(false);
 
-      const response = await fetch('http://localhost:5000/users');
+      if (!employeeInfo || !employeeInfo.BranchID) {
+        console.error('Employee branch ID is not available.');
+        return;
+      }
+
+      const response = await fetch(`http://localhost:5000/users/${employeeInfo.BranchID}`);
       if (response.ok) {
         const data = await response.json();
         setUsers(data);
@@ -115,7 +120,12 @@ function EmployeeDashboard() {
       setShowLoans(false);
       setShowBanks(false);
 
-      const response = await fetch('http://localhost:5000/accounts');
+      if (!employeeInfo || !employeeInfo.BranchID) {
+        console.error('Employee branch ID is not available.');
+        return;
+      }
+
+      const response = await fetch(`http://localhost:5000/accounts/${employeeInfo.BranchID}`);
       if (response.ok) {
         const data = await response.json();
         setAccounts(data);
@@ -130,15 +140,20 @@ function EmployeeDashboard() {
 
   const fetchLoans = async () => {
     try {
-      // Reset all visibility states
       setShowUsers(false);
       setShowAccounts(false);
       setShowLoans(false);
       setShowBanks(false);
 
-      const response = await fetch('http://localhost:5000/loans');
+      if (!employeeInfo || !employeeInfo.BranchID) {
+        console.error('Employee branch ID is not available.');
+        return;
+      }
+
+      const response = await fetch(`http://localhost:5000/loans/${employeeInfo.BranchID}`);
       if (response.ok) {
         const data = await response.json();
+        console.log('Fetched Loans:', data); // Debugging
         setLoans(data);
         setShowLoans(true); // Show the loan list
       } else {
@@ -157,10 +172,15 @@ function EmployeeDashboard() {
       setShowLoans(false);
       setShowBanks(false);
 
-      const response = await fetch('http://localhost:5000/banks');
+      if (!employeeInfo || !employeeInfo.BranchID) {
+        console.error('Employee branch ID is not available.');
+        return;
+      }
+
+      const response = await fetch(`http://localhost:5000/bank-info/${employeeInfo.BranchID}`);
       if (response.ok) {
         const data = await response.json();
-        setBanks(data);
+        setBanks([data]); // Store the bank info in an array for consistency
         setShowBanks(true); // Show the bank info
       } else {
         console.error('Error fetching bank information');
@@ -256,6 +276,14 @@ function EmployeeDashboard() {
             </button>
           </li>
           <li><Link to="/custom-query" className="nav-button">Custom Query</Link></li>
+          <li>
+            <button
+              onClick={() => navigate(`/employee/${employeeId}/issue-loan`)}
+              className="nav-button"
+            >
+              Issue Loan
+            </button>
+          </li>
         </ul>
       </nav>
 
@@ -264,20 +292,20 @@ function EmployeeDashboard() {
         <section className="data-section">
           <h4>Users</h4>
           {users.length > 0 ? (
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+            <table>
               <thead>
                 <tr>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>User ID</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Name</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Address</th>
+                  <th>User ID</th>
+                  <th>Name</th>
+                  <th>Address</th>
                 </tr>
               </thead>
               <tbody>
                 {users.map((user) => (
                   <tr key={user.userid}>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{user.userid}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{user.name}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{user.address}</td>
+                    <td>{user.userid}</td>
+                    <td>{user.name}</td>
+                    <td>{user.address}</td>
                   </tr>
                 ))}
               </tbody>
@@ -293,24 +321,22 @@ function EmployeeDashboard() {
         <section className="data-section">
           <h4>Accounts</h4>
           {accounts.length > 0 ? (
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+            <table>
               <thead>
                 <tr>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Account No</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>User Name</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Branch (ID with Address)</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Balance</th>
+                  <th>Account No</th>
+                  <th>User Name</th>
+                  <th>Branch (ID with Address)</th>
+                  <th>Balance</th>
                 </tr>
               </thead>
               <tbody>
                 {accounts.map((account) => (
                   <tr key={account.accountno}>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{account.accountno}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{account.username}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>
-                      {account.branchid} - {account.branchaddress}
-                    </td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{account.balance}</td>
+                    <td>{account.accountno}</td>
+                    <td>{account.username}</td>
+                    <td>{account.branchid} - {account.branchaddress}</td>
+                    <td>{account.balance}</td>
                   </tr>
                 ))}
               </tbody>
@@ -326,30 +352,30 @@ function EmployeeDashboard() {
         <section className="data-section">
           <h4>Loans</h4>
           {loans.length > 0 ? (
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
+            <table>
               <thead>
                 <tr>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Loan ID</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>User Name</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Loan Amount</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Duration</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Interest</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Loan Type</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Issued by Bank</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Issue Date</th>
+                  <th>Loan ID</th>
+                  <th>User Name</th>
+                  <th>Loan Amount</th>
+                  <th>Duration</th>
+                  <th>Interest</th>
+                  <th>Loan Type</th>
+                  <th>Issued by Bank</th>
+                  <th>Issue Date</th>
                 </tr>
               </thead>
               <tbody>
                 {loans.map((loan) => (
                   <tr key={loan.loanid}>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.loanid}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.username}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.loanamount}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.duration}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.interest}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.loantype}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.bankname}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{loan.issuedate}</td>
+                    <td>{loan.loanid}</td>
+                    <td>{loan.username}</td>
+                    <td>{loan.loanamount}</td>
+                    <td>{loan.duration}</td>
+                    <td>{loan.interest}</td>
+                    <td>{loan.loantype}</td>
+                    <td>{loan.bankname}</td>
+                    <td>{loan.issuedate}</td>
                   </tr>
                 ))}
               </tbody>
@@ -361,33 +387,16 @@ function EmployeeDashboard() {
       )}
 
       {/* Display Bank Information */}
-      {showBanks && (
+      {showBanks && banks.length > 0 && (
         <section className="data-section">
           <h4>Bank Information</h4>
-          {banks.length > 0 ? (
-            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '10px' }}>
-              <thead>
-                <tr>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Bank ID</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Bank Name</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>Bank Money</th>
-                  <th style={{ border: '1px solid #ccc', padding: '10px' }}>No of Branches</th>
-                </tr>
-              </thead>
-              <tbody>
-                {banks.map((bank) => (
-                  <tr key={bank.bankid}>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{bank.bankid}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{bank.bankname}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{bank.bankmoney}</td>
-                    <td style={{ border: '1px solid #ccc', padding: '10px' }}>{bank.noofbranches}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p>No bank information to display.</p>
-          )}
+          <div className="bank-info">
+            <p><strong>Branch ID:</strong> {banks[0].branchid}</p>
+            <p><strong>Branch Address:</strong> {banks[0].branchadd}</p>
+            <p><strong>Bank ID:</strong> {banks[0].bankid}</p>
+            <p><strong>Bank Name:</strong> {banks[0].bankname}</p>
+            <p><strong>Bank Money:</strong> ₹{banks[0].bankmoney}</p>
+          </div>
         </section>
       )}
     </div>
