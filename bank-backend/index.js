@@ -473,6 +473,76 @@ app.get('/bank-info/:branchId', async (req, res) => {
   }
 });
 
+// Endpoint: Register a New User
+app.post('/customer/register', async (req, res) => {
+  const { name, address, mobilenumber } = req.body;
+
+  try {
+    const result = await pool.query(
+      `
+      INSERT INTO users (name, address, mobilenumber)
+      VALUES ($1, $2, $3)
+      RETURNING userid
+      `,
+      [name, address, mobilenumber]
+    );
+
+    res.status(201).json({ userid: result.rows[0].userid });
+  } catch (error) {
+    console.error('Error registering new user:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint: Open a New Account
+app.post('/user/:userId/open-account', async (req, res) => {
+  const { userId } = req.params;
+  const { branchId, startingBalance } = req.body; // Remove bankId
+
+  try {
+    // Ensure the starting balance is at least 1000
+    if (startingBalance < 1000) {
+      return res.status(400).json({ error: 'Starting balance must be at least ₹1000.' });
+    }
+
+    // Insert the new account into the database
+    const result = await pool.query(
+      `
+      INSERT INTO account (userid, branchid, balance)
+      VALUES ($1, $2, $3)
+      RETURNING accountno
+      `,
+      [userId, branchId, startingBalance]
+    );
+
+    res.status(201).json({ accountNo: result.rows[0].accountno });
+  } catch (error) {
+    console.error('Error opening new account:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint: Fetch Branches by Bank ID
+app.get('/branches/:bankId', async (req, res) => {
+  const { bankId } = req.params;
+
+  try {
+    const result = await pool.query(
+      `
+      SELECT branchid, branchadd
+      FROM branch
+      WHERE bankid = $1
+      `,
+      [bankId]
+    );
+
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching branches:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Start the Express server
 app.listen(port, async () => {
   console.log(`Server is starting on http://localhost:${port}`);

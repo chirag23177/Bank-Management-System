@@ -1,0 +1,87 @@
+.open-account-container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.open-account-container h2 {
+  text-align: center;
+  color: #004080;
+  margin-bottom: 20px;
+}
+
+.open-account-form .form-group {
+  margin-bottom: 15px;
+}
+
+.open-account-form label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.open-account-form select,
+.open-account-form input {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+/* Back and Logout Buttons */
+.top-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.back-button,
+.logout-button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.back-button {
+  background-color: #f0ad4e;
+  color: white;
+}
+
+.back-button:hover {
+  background-color: #ec971f;
+}
+
+.logout-button {
+  background-color: #d9534f;
+  color: white;
+}
+
+.logout-button:hover {
+  background-color: #c9302c;
+}
+
+/* Fix Open Account Button Width */
+.open-account-button {
+  display: inline-block;
+  width: auto; /* Ensure the button does not stretch */
+  padding: 10px 20px;
+  font-size: 1rem;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.open-account-button:hover {
+  background-color: #0056b3;
+}
