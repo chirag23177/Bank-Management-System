@@ -365,6 +365,114 @@ app.get('/user/:userId/loans', async (req, res) => {
   }
 });
 
+// Endpoint: Fetch Users by Branch ID
+app.get('/users/:branchId', async (req, res) => {
+  const { branchId } = req.params;
+  try {
+    const result = await pool.query(
+      `
+      SELECT DISTINCT u.userid, u.name, u.address
+      FROM users u
+      JOIN account a ON u.userid = a.userid
+      WHERE a.branchid = $1
+      `,
+      [branchId]
+    );
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint: Fetch Accounts by Branch ID
+app.get('/accounts/:branchId', async (req, res) => {
+  const { branchId } = req.params;
+  try {
+    const result = await pool.query(
+      `
+      SELECT 
+        a.accountno, 
+        a.balance, 
+        COALESCE(u.name, 'N/A') AS username, 
+        COALESCE(b.branchid, -1) AS branchid, 
+        COALESCE(b.branchadd, 'N/A') AS branchaddress
+      FROM account a
+      LEFT JOIN users u ON a.userid = u.userid
+      LEFT JOIN branch b ON a.branchid = b.branchid
+      WHERE a.branchid = $1
+      `,
+      [branchId]
+    );
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching accounts:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint: Fetch Loans by Branch ID
+app.get('/loans/:branchId', async (req, res) => {
+  const { branchId } = req.params;
+  try {
+    const result = await pool.query(
+      `
+      SELECT 
+        l.loanid, 
+        l.loanamount, 
+        l.duration, 
+        l.interest, 
+        l.loantype, 
+        l.issuedate, 
+        COALESCE(u.name, 'N/A') AS username, 
+        COALESCE(b.bankname, 'N/A') AS bankname
+      FROM loan l
+      JOIN users u ON l.userid = u.userid
+      JOIN account a ON u.userid = a.userid
+      JOIN branch br ON a.branchid = br.branchid
+      JOIN bank b ON l.bankid = b.bankid
+      WHERE br.branchid = $1
+      ORDER BY l.issuedate DESC
+      `,
+      [branchId]
+    );
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error fetching loans:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
+// Endpoint: Fetch Bank and Branch Info by Branch ID
+app.get('/bank-info/:branchId', async (req, res) => {
+  const { branchId } = req.params;
+  try {
+    const result = await pool.query(
+      `
+      SELECT 
+        br.branchid, 
+        br.branchadd, 
+        b.bankid, 
+        b.bankname, 
+        b.bankmoney
+      FROM branch br
+      JOIN bank b ON br.bankid = b.bankid
+      WHERE br.branchid = $1
+      `,
+      [branchId]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'No bank or branch information found for the given branch ID.' });
+    }
+
+    res.status(200).json(result.rows[0]);
+  } catch (error) {
+    console.error('Error fetching bank and branch info:', error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
+
 // Start the Express server
 app.listen(port, async () => {
   console.log(`Server is starting on http://localhost:${port}`);

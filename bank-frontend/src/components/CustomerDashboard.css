@@ -107,54 +107,43 @@
   text-align: center;
 }
 
-.transactions-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-}
-
-.transactions-table th,
-.transactions-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
-}
-
-.transactions-table th {
-  background-color: #f2f2f2;
-  font-weight: bold;
-}
-
-.transactions-table tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.transactions-table tr:hover {
-  background-color: #f1f1f1;
-}
-
+/* Styling for tables */
+.transactions-table,
 .loans-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  background-color: white; /* White rectangle background */
+  border-radius: 8px; /* Rounded corners */
+  overflow: hidden; /* Ensure rounded corners apply to the table */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
 }
 
+/* Styling for table header row */
+.transactions-table thead tr,
+.loans-table thead tr {
+  background-color: #004080; /* Blue background for header row */
+  color: white; /* White text for header row */
+  font-weight: bold; /* Bold text */
+}
+
+/* Styling for table cells */
+.transactions-table th,
+.transactions-table td,
 .loans-table th,
 .loans-table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: left;
+  border: 1px solid #ddd; /* Light gray border */
+  padding: 10px; /* Padding inside cells */
+  text-align: left; /* Align text to the left */
 }
 
-.loans-table th {
-  background-color: #f2f2f2;
-  font-weight: bold;
+/* Styling for table rows */
+.transactions-table tbody tr:nth-child(even),
+.loans-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9; /* Light gray background for even rows */
 }
 
-.loans-table tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.loans-table tr:hover {
-  background-color: #f1f1f1;
+.transactions-table tbody tr:hover,
+.loans-table tbody tr:hover {
+  background-color: #f1f1f1; /* Slightly darker gray background on hover */
 }

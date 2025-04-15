@@ -1,0 +1,4 @@
+1. Employee can add a new user with his account.
+2. Employee can grant a loan.
+3. User can also take a loan.
+4. Empluyee can see only the data of his bank.
