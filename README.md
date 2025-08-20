@@ -208,6 +208,7 @@ Open a new account by selecting a branch and bank, and specifying a starting bal
 - Abhishek Rao
 - Aryamaan Singh
 - Aryan Dahiya
+- Aditya Jaiswal
 
 ---
 
