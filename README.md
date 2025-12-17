@@ -1,6 +1,10 @@
 
 # Bank Management System
 
+## Live Deployment
+- **Frontend:** [Click here to view the App](https://bank-management-system-mauve-five.vercel.app) 
+- **Backend API:** [https://bank-backend-og6q.onrender.com](https://bank-backend-og6q.onrender.com)
+
 ## Project Overview
 
 
@@ -40,7 +44,12 @@ The **Bank Management System** is a web-based application designed to manage ban
 ### Backend:
 - **Node.js:** For building the server-side application.
 - **Express.js:** For handling API requests.
-- **PostgreSQL:** For managing the database (with pgAdmin4 for administration).
+- **PostgreSQL:** For managing the database.
+- **Render:** For backend and database hosting.
+
+### Deployment:
+- **Vercel:** For frontend hosting.
+- **Render:** For backend hosting.
 
 ---
 
