@@ -1,23 +1,29 @@
 // index.js
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
 
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 // Middleware setup
-app.use(cors());
+// Allow requests from your frontend (we will set FRONTEND_URL in Render later)
+// For now, we allow all origins ('*') if the variable isn't set, to keep it working locally.
+app.use(cors({
+  origin: process.env.FRONTEND_URL || '*'
+}));
 app.use(express.json());
 
-// Set up PostgreSQL connection pool with your credentials
-const pool = new Pool({
-  user: 'postgres',            // your PostgreSQL username
-  host: 'localhost',           // your host
-  database: 'bank',            // your database name
-  password: 'Chirag',      // your database password
-  port: 5432,                  // PostgreSQL default port
-});
+// Set up PostgreSQL connection pool
+const isProduction = process.env.NODE_ENV === 'production';
+
+const poolConfig = {
+  connectionString: process.env.DATABASE_URL,
+  ssl: isProduction ? { rejectUnauthorized: false } : false,
+};
+
+const pool = new Pool(poolConfig);
 
 // ---------- Check Database Connection on Server Start ---------- //
 const checkDatabaseConnection = async () => {
