@@ -14,7 +14,7 @@ function CustomerDashboard() {
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/user/${userId}`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/user/${userId}`);
         if (response.ok) {
           const data = await response.json();
           setUserInfo(data);
@@ -28,7 +28,7 @@ function CustomerDashboard() {
 
     const fetchAccounts = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/user/${userId}/accounts`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/user/${userId}/accounts`);
         if (response.ok) {
           const data = await response.json();
           setAccounts(data);
@@ -42,7 +42,7 @@ function CustomerDashboard() {
 
     const fetchTransactions = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/user/${userId}/transactions`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/user/${userId}/transactions`);
         if (response.ok) {
           const data = await response.json();
           setTransactions(data);
@@ -56,7 +56,7 @@ function CustomerDashboard() {
 
     const fetchLoans = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/user/${userId}/loans`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/user/${userId}/loans`);
         if (response.ok) {
           const data = await response.json();
           console.log('Fetched Loans:', data); // Debugging

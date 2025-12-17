@@ -20,7 +20,7 @@ function IssueLoan() {
   useEffect(() => {
     const fetchBankInfo = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/bank-info/${employeeId}`);
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/bank-info/${employeeId}`);
         if (response.ok) {
           const data = await response.json();
           setBankId(data.bankid);
@@ -39,7 +39,7 @@ function IssueLoan() {
 
   const fetchUsers = async (bankId) => {
     try {
-      const response = await fetch(`http://localhost:5000/users-by-bank/${bankId}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/users-by-bank/${bankId}`);
       if (response.ok) {
         const data = await response.json();
         setUsers(data);
@@ -53,7 +53,7 @@ function IssueLoan() {
 
   const fetchAccounts = async (userId) => {
     try {
-      const response = await fetch(`http://localhost:5000/accounts/${bankId}/${userId}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/accounts/${bankId}/${userId}`);
       if (response.ok) {
         const data = await response.json();
         setAccounts(data);
@@ -80,7 +80,7 @@ function IssueLoan() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/issue-loan', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/issue-loan`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -16,7 +16,7 @@ function OpenAccount() {
     // Fetch available banks
     const fetchBanks = async () => {
       try {
-        const response = await fetch('http://localhost:5000/banks');
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/banks`);
         if (response.ok) {
           const data = await response.json();
           setBanks(data);
@@ -34,7 +34,7 @@ function OpenAccount() {
   // Fetch branches dynamically based on the selected bank
   const fetchBranches = async (bankId) => {
     try {
-      const response = await fetch(`http://localhost:5000/branches/${bankId}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/branches/${bankId}`);
       if (response.ok) {
         const data = await response.json();
         setBranches(data);
@@ -61,7 +61,7 @@ function OpenAccount() {
     e.preventDefault();
 
     try {
-      const response = await fetch(`http://localhost:5000/user/${userId}/open-account`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/user/${userId}/open-account`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -19,8 +19,8 @@ function LoginPage() {
     try {
       const response = await fetch(
         loginType === 'customer'
-          ? 'http://localhost:5000/customer/login'
-          : 'http://localhost:5000/employee/login',
+          ? `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/customer/login`
+          : `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/employee/login`,
         {
           method: 'POST',
           headers: {
@@ -52,7 +52,7 @@ function LoginPage() {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:5000/customer/register', {
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/customer/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

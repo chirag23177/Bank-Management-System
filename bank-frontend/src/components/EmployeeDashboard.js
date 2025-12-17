@@ -23,7 +23,7 @@ function EmployeeDashboard() {
     // Fetch employee information from the backend
     const fetchEmployeeInfo = async () => {
       try {
-        const response = await fetch('http://localhost:5000/employee/login', {
+        const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/employee/login`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -45,10 +45,10 @@ function EmployeeDashboard() {
     // Fetch dashboard statistics
     const fetchDashboardStats = async () => {
       try {
-        const usersResponse = await fetch('http://localhost:5000/users');
-        const accountsResponse = await fetch('http://localhost:5000/accounts');
-        const loansResponse = await fetch('http://localhost:5000/loans');
-        const branchesResponse = await fetch('http://localhost:5000/branches');
+        const usersResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/users`);
+        const accountsResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/accounts`);
+        const loansResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/loans`);
+        const branchesResponse = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/branches`);
 
         if (usersResponse.ok) {
           const usersData = await usersResponse.json();
@@ -99,7 +99,7 @@ function EmployeeDashboard() {
         return;
       }
 
-      const response = await fetch(`http://localhost:5000/users/${employeeInfo.BranchID}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/users/${employeeInfo.BranchID}`);
       if (response.ok) {
         const data = await response.json();
         setUsers(data);
@@ -125,7 +125,7 @@ function EmployeeDashboard() {
         return;
       }
 
-      const response = await fetch(`http://localhost:5000/accounts/${employeeInfo.BranchID}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/accounts/${employeeInfo.BranchID}`);
       if (response.ok) {
         const data = await response.json();
         setAccounts(data);
@@ -150,7 +150,7 @@ function EmployeeDashboard() {
         return;
       }
 
-      const response = await fetch(`http://localhost:5000/loans/${employeeInfo.BranchID}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/loans/${employeeInfo.BranchID}`);
       if (response.ok) {
         const data = await response.json();
         console.log('Fetched Loans:', data); // Debugging
@@ -177,7 +177,7 @@ function EmployeeDashboard() {
         return;
       }
 
-      const response = await fetch(`http://localhost:5000/bank-info/${employeeInfo.BranchID}`);
+      const response = await fetch(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/bank-info/${employeeInfo.BranchID}`);
       if (response.ok) {
         const data = await response.json();
         setBanks([data]); // Store the bank info in an array for consistency
