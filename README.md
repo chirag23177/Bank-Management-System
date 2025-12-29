@@ -1,10 +1,6 @@
 
 # Bank Management System
 
-## Live Deployment
-- **Frontend:** [Click here to view the App](https://bank-management-system-mauve-five.vercel.app) 
-- **Backend API:** [https://bank-backend-og6q.onrender.com](https://bank-backend-og6q.onrender.com)
-
 ## Project Overview
 
 
